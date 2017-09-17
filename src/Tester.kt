@@ -1,4 +1,8 @@
 fun main(args: Array<String>) {
+    testVotesAndBagOfWordsParsing()
+}
+
+private fun testVotesAndBagOfWordsParsing() {
     val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
     print("-- VOTOS NAO --\n")
     print("[ Total de ${fileParser.bagOfWords.size()} palavras e ${fileParser.negativeVotes.size} votos ]\n")

@@ -1,6 +1,11 @@
-class BagOfWords {
-    private var words: MutableList<String> = mutableListOf()
+class BagOfWords() {
+
+    var words: MutableList<String> = mutableListOf()
         get() = field
+
+    constructor(list: MutableList<String>) : this() {
+        words = list
+    }
 
     fun parseWords(string: String) {
         val parsedWords = string.split(" ", "\n")
