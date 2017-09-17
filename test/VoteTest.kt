@@ -15,5 +15,6 @@ internal class VoteTest {
                 BagOfWords(mutableListOf("Love", "kotlin")))
 
         print(vote.attributes)
+        //TODO assertion
     }
 }
