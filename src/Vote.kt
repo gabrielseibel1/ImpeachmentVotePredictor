@@ -1,9 +1,9 @@
-class Vote (val voteText: String) {
+class Vote (val voteText: String, bagOfWords: BagOfWords) {
 
     init {
-        //TODO
+        //TODO build attributes
     }
-    val atributes: MutableList<Int> = mutableListOf()
+    val attributes: MutableList<Int> = mutableListOf()
 
     override fun toString(): String {
         return "[VOTE: $voteText]"

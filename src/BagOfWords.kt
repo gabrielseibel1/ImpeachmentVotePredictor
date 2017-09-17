@@ -3,8 +3,10 @@ class BagOfWords {
         get() = field
 
     fun parseWords(string: String) {
-        val parsedWords = string.split(" ")
-        words.addAll(parsedWords)
+        val parsedWords = string.split(" ", "\n")
+        parsedWords.filter { !it.isBlank() }.forEach {
+            if (!words.contains(it)) words.add(it)
+        }
     }
 
     override fun toString(): String {

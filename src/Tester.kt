@@ -1,13 +1,15 @@
 fun main(args: Array<String>) {
-    var preProcessor = VotesFileParser("data/nao_com_preProcess.txt")
+    val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
     print("-- VOTOS NAO --\n")
-    print("[ Total de ${preProcessor.dictionary.size()} palavras e ${preProcessor.votes.size} votos ]\n")
-    //printVotes(preProcessor.votes)
+    print("[ Total de ${fileParser.bagOfWords.size()} palavras e ${fileParser.negativeVotes.size} votos ]\n")
+    printVotes(fileParser.negativeVotes)
 
-    preProcessor = VotesFileParser("data/sim_com_preProcess.txt")
     print("-- VOTOS SIM --\n")
-    print("[ Total de ${preProcessor.dictionary.size()} palavras e ${preProcessor.votes.size} votos ]\n")
-    //printVotes(preProcessor.votes)
+    print("[ Total de ${fileParser.bagOfWords.size()} palavras e ${fileParser.positiveVotes.size} votos ]\n")
+    printVotes(fileParser.positiveVotes)
+
+    print("-- BAG OF WORDS --\n")
+    print(fileParser.bagOfWords)
 }
 
 fun printVotes(votes: List<Vote>) {

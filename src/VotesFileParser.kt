@@ -5,14 +5,34 @@ import java.io.File
  * a BagOfWords containing all words of the file
  * and a collection of Votes base on the BagOfWords
  */
-class VotesFileParser (fileName: String) {
+class VotesFileParser (private val yesVotesFileName: String, private val noVotesFileName: String) {
 
-    val dictionary = BagOfWords()
-    val votes = mutableListOf<Vote>()
+    val bagOfWords = BagOfWords()
+    var positiveVotes : MutableList<Vote>
+    val negativeVotes : MutableList<Vote>
 
     init  {
-        dictionary.clear()
-        votes.clear()
+        buildBagOfWords()
+        positiveVotes = votesFromFile(yesVotesFileName)
+        negativeVotes = votesFromFile(noVotesFileName)
+    }
+
+    private fun buildBagOfWords() {
+        bagOfWords.clear()
+
+        //parse positive votes' words
+        var inputStream = File(yesVotesFileName).inputStream()
+        var fileContent = inputStream.bufferedReader().use { it.readText() }
+        bagOfWords.parseWords(fileContent)
+
+        //parse negative votes' words
+        inputStream = File(noVotesFileName).inputStream()
+        fileContent = inputStream.bufferedReader().use { it.readText() }
+        bagOfWords.parseWords(fileContent)
+    }
+
+    private fun votesFromFile(fileName: String) : MutableList<Vote> {
+        val votes = mutableListOf<Vote>()
 
         val inputStream = File(fileName).inputStream()
         val listOfLines = mutableListOf<String>()
@@ -25,8 +45,7 @@ class VotesFileParser (fileName: String) {
         for (lineIndex in listOfLines.indices) {
             //found a blank line -> end of a vote
             if (listOfLines[lineIndex].isBlank()) {
-                votes.add(Vote(stringBuilder.toString()))
-                dictionary.parseWords(stringBuilder.toString())
+                votes.add(Vote(stringBuilder.toString(), bagOfWords))
 
                 //reset builder and parse next vote
                 stringBuilder = StringBuilder()
@@ -36,6 +55,7 @@ class VotesFileParser (fileName: String) {
             //parse part of vote (can be multiline)
             stringBuilder.append(listOfLines[lineIndex])
         }
-    }
 
+        return votes
+    }
 }
