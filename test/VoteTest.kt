@@ -1,7 +1,5 @@
 import org.junit.jupiter.api.Test
 
-import org.junit.jupiter.api.Assertions.*
-
 internal class VoteTest {
 
     @Test
@@ -11,10 +9,16 @@ internal class VoteTest {
 
     @Test
     fun buildAttributes() {
-        val vote = Vote("I love kotlin and unit-testing Yes please",
-                BagOfWords(mutableListOf("Love", "kotlin")))
+        val vote = Vote("love kotlin unit-testing Please")
+        vote.buildAttributes(BagOfWords(mutableListOf("I", "love", "kotlin", "unit-testing", "please", "sugar", "extra")))
 
-        print(vote.attributes)
-        //TODO assertion
+        var checkSumIsCorrect = false
+        val numberOfWords = vote.text.split(" ").filter { it.isNotBlank() }.size
+        var checkSum = 0
+        vote.attributes.forEach { checkSum += it }
+        checkSumIsCorrect = (checkSum == numberOfWords)
+        println("partial checkSum is $checkSumIsCorrect with value $checkSum and $numberOfWords words")
+
+        assert(checkSumIsCorrect)
     }
 }

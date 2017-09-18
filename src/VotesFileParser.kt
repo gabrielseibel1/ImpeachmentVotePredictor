@@ -1,37 +1,68 @@
 import java.io.File
+import java.util.*
 
 /**
- * Parses a formatted votes-file and generates
- * a BagOfWords containing all words of the file
- * and a collection of Votes base on the BagOfWords
+ * Parses a formatted votes-files and generates
+ * a BagOfWords containing all words of the files
+ * and two collections of Votes
  */
-class VotesFileParser (private val yesVotesFileName: String, private val noVotesFileName: String) {
+class VotesFileParser (yesVotesFileName: String, noVotesFileName: String) {
 
-    val bagOfWords = BagOfWords()
-    var positiveVotes : MutableList<Vote>
-    val negativeVotes : MutableList<Vote>
+    /**
+     * All the words in the training set
+     */
+    val trainingWords = BagOfWords()
+
+    /**
+     * Votes of class YES used for training
+     */
+    val trainingPositiveVotes = mutableListOf<Vote>()
+
+    /**
+     * Votes of class NO used for training
+     */
+    val trainingNegativeVotes = mutableListOf<Vote>()
+
+    /**
+     * Votes of class YES used for testing
+     */
+    val testingPositiveVotes = mutableListOf<Vote>()
+
+    /**
+     * Votes of class NO used for testing
+     */
+    val testingNegativeVotes = mutableListOf<Vote>()
 
     init  {
+        val allPositiveVotes = votesTextsFromFile(yesVotesFileName)
+        val allNegativeVotes = votesTextsFromFile(noVotesFileName)
+
+        segregateTestingAndTrainingVotes(allPositiveVotes, trainingPositiveVotes, testingPositiveVotes)
+        segregateTestingAndTrainingVotes(allNegativeVotes, trainingNegativeVotes, testingNegativeVotes)
+
         buildBagOfWords()
-        positiveVotes = votesFromFile(yesVotesFileName)
-        negativeVotes = votesFromFile(noVotesFileName)
+
+        trainingPositiveVotes.forEach { it.buildAttributes(trainingWords) }
+        trainingNegativeVotes.forEach { it.buildAttributes(trainingWords) }
+        testingPositiveVotes.forEach { it.buildAttributes(trainingWords) }
+        testingNegativeVotes.forEach { it.buildAttributes(trainingWords) }
+    }
+
+    private fun segregateTestingAndTrainingVotes(allVotes: MutableList<Vote>, trainingVotes: MutableList<Vote>, testingVotes: MutableList<Vote>) {
+        allVotes.forEach {
+            if ((1..10).random() == 1)
+                testingVotes.add(it)
+            else
+                trainingVotes.add(it)
+        }
     }
 
     private fun buildBagOfWords() {
-        bagOfWords.clear()
-
-        //parse positive votes' words
-        var inputStream = File(yesVotesFileName).inputStream()
-        var fileContent = inputStream.bufferedReader().use { it.readText() }
-        bagOfWords.parseWords(fileContent)
-
-        //parse negative votes' words
-        inputStream = File(noVotesFileName).inputStream()
-        fileContent = inputStream.bufferedReader().use { it.readText() }
-        bagOfWords.parseWords(fileContent)
+        trainingPositiveVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
+        trainingNegativeVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
     }
 
-    private fun votesFromFile(fileName: String) : MutableList<Vote> {
+    private fun votesTextsFromFile(fileName: String) : MutableList<Vote> {
         val votes = mutableListOf<Vote>()
 
         val inputStream = File(fileName).inputStream()
@@ -45,7 +76,7 @@ class VotesFileParser (private val yesVotesFileName: String, private val noVotes
         for (lineIndex in listOfLines.indices) {
             //found a blank line -> end of a vote
             if (listOfLines[lineIndex].isBlank()) {
-                votes.add(Vote(stringBuilder.toString(), bagOfWords))
+                votes.add(Vote(stringBuilder.toString().toLowerCase()))
 
                 //reset builder and parse next vote
                 stringBuilder = StringBuilder()
@@ -55,7 +86,11 @@ class VotesFileParser (private val yesVotesFileName: String, private val noVotes
             //parse part of vote (can be multiline)
             stringBuilder.append(listOfLines[lineIndex])
         }
-
         return votes
     }
+
+    /**
+     * Generates random number in a closed range
+     */
+    private fun ClosedRange<Int>.random() = Random().nextInt(endInclusive - start) +  start
 }
