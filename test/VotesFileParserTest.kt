@@ -17,10 +17,11 @@ internal class VotesFileParserTest {
                     assert(isPresentInVote)
                 }
 
-        for (vote in fileParser.trainingPositiveVotes + fileParser.trainingNegativeVotes) {
-            for (word in vote.text.split(" ", "\n").filter { it.isNotBlank() }) {
-                assert(fileParser.trainingWords.words.contains(word))
-            }
+        (fileParser.trainingPositiveVotes + fileParser.trainingNegativeVotes)
+                .forEach { vote ->
+                    for (word in vote.text.split(" ", "\n").filter { it.isNotBlank() }) {
+                        assert(fileParser.trainingWords.words.contains(word))
+                }
         }
 
         var checkSumIsCorrect = false
