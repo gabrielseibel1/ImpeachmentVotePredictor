@@ -5,11 +5,8 @@ internal class VotesFileParserTest {
     fun testVotesAndBagOfWordsParsing() {
         val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
 
-        print("[ Total de ${fileParser.trainingWords.size()} palavras, " +
-                "${fileParser.trainingNegativeVotes.size} votos negativos de treino, " +
-                "${fileParser.trainingPositiveVotes.size} votos positivos de treino, " +
-                "${fileParser.testingNegativeVotes.size} votos negativos de teste, " +
-                "${fileParser.testingPositiveVotes.size} votos positivos de teste.]\n")
+        assert(fileParser.trainingNegativeVotes.size + fileParser.testingNegativeVotes.size == 133)
+        assert(fileParser.trainingPositiveVotes.size + fileParser.testingPositiveVotes.size == 364)
 
         fileParser.trainingWords.words
                 .forEach {
@@ -36,4 +33,13 @@ internal class VotesFileParserTest {
         assert(checkSumIsCorrect)
     }
 
+    private fun printFileParserPRopertiesSizes() {
+        val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
+
+        print("[ Total de ${fileParser.trainingWords.size()} palavras, " +
+                "${fileParser.trainingNegativeVotes.size} votos negativos de treino, " +
+                "${fileParser.trainingPositiveVotes.size} votos positivos de treino, " +
+                "${fileParser.testingNegativeVotes.size} votos negativos de teste, " +
+                "${fileParser.testingPositiveVotes.size} votos positivos de teste.]\n")
+    }
 }
