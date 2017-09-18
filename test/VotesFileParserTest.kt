@@ -3,7 +3,7 @@ import org.junit.jupiter.api.Test
 internal class VotesFileParserTest {
     @Test
     fun testVotesAndBagOfWordsParsing() {
-        val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
+        val fileParser = VotesFileParser()
 
         assert(fileParser.trainingNegativeVotes.size + fileParser.testingNegativeVotes.size == 133)
         assert(fileParser.trainingPositiveVotes.size + fileParser.testingPositiveVotes.size == 364)
@@ -34,7 +34,7 @@ internal class VotesFileParserTest {
     }
 
     private fun printFileParserPRopertiesSizes() {
-        val fileParser = VotesFileParser("data/sim_com_preProcess.txt", "data/nao_com_preProcess.txt")
+        val fileParser = VotesFileParser()
 
         print("[ Total de ${fileParser.trainingWords.size()} palavras, " +
                 "${fileParser.trainingNegativeVotes.size} votos negativos de treino, " +
