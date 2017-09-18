@@ -6,7 +6,10 @@ import java.util.*
  * a BagOfWords containing all words of the files
  * and two collections of Votes
  */
-class VotesFileParser (yesVotesFileName: String, noVotesFileName: String) {
+class VotesFileParser {
+
+    private val yesVotesFileName = "data/sim_com_preProcess.txt"
+    private val noVotesFileName = "data/nao_com_preProcess.txt"
 
     /**
      * All the words in the training set
