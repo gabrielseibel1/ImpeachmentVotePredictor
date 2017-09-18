@@ -1,6 +1,11 @@
-class Vote (text: String) {
+class Vote (text: String, val voteClass: Boolean) {
 
     val text : String
+
+    /**
+     * Each hashMap entry is a key-value pair representing word and word-count
+     */
+    val attributes = mutableListOf<Int>()
 
     init {
         val builder = StringBuilder()
@@ -10,12 +15,6 @@ class Vote (text: String) {
 
         this.text = builder.toString()
     }
-
-
-    /**
-     * Each hashMap entry is a key-value pair representing word and word-count
-     */
-    val attributes = mutableListOf<Int>()
 
     fun buildAttributes(bagOfWords: BagOfWords) {
         //val attributes = mutableListOf<Int>()

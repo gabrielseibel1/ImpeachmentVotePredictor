@@ -5,16 +5,19 @@ internal class VotesFileParserTest {
     fun testVotesAndBagOfWordsParsing() {
         val fileParser = VotesFileParser()
 
-        assert(fileParser.trainingNegativeVotes.size + fileParser.testingNegativeVotes.size == 133)
-        assert(fileParser.trainingPositiveVotes.size + fileParser.testingPositiveVotes.size == 364)
+        assert(fileParser.trainingVotes.filter { it.voteClass == true }.size
+                + fileParser.testingVotes.filter { it.voteClass == true }.size == 364)
+
+        assert(fileParser.trainingVotes.filter { it.voteClass == false }.size
+                + fileParser.testingVotes.filter { it.voteClass == false }.size == 133)
 
         fileParser.trainingWords.words
                 .forEach {
-                    val isPresentInVote = (fileParser.trainingPositiveVotes + fileParser.trainingNegativeVotes).any { vote -> vote.text.contains(it) }
+                    val isPresentInVote = (fileParser.trainingVotes).any { vote -> vote.text.contains(it) }
                     assert(isPresentInVote)
                 }
 
-        (fileParser.trainingPositiveVotes + fileParser.trainingNegativeVotes)
+        fileParser.trainingVotes
                 .forEach { vote ->
                     for (word in vote.text.split(" ", "\n").filter { it.isNotBlank() }) {
                         assert(fileParser.trainingWords.words.contains(word))
@@ -22,7 +25,7 @@ internal class VotesFileParserTest {
         }
 
         var checkSumIsCorrect = false
-        (fileParser.trainingPositiveVotes + fileParser.trainingPositiveVotes)
+        fileParser.trainingVotes
                 .forEach {
                     val numberOfWords = it.text.split(" ", "\n").filter { it.isNotBlank() }.size
                     var checkSum = 0
@@ -37,9 +40,9 @@ internal class VotesFileParserTest {
         val fileParser = VotesFileParser()
 
         print("[ Total de ${fileParser.trainingWords.size()} palavras, " +
-                "${fileParser.trainingNegativeVotes.size} votos negativos de treino, " +
-                "${fileParser.trainingPositiveVotes.size} votos positivos de treino, " +
-                "${fileParser.testingNegativeVotes.size} votos negativos de teste, " +
-                "${fileParser.testingPositiveVotes.size} votos positivos de teste.]\n")
+                "${fileParser.trainingVotes.filter { it.voteClass == false }.size} votos negativos de treino, " +
+                "${fileParser.trainingVotes.filter { it.voteClass == true }.size} votos positivos de treino, " +
+                "${fileParser.testingVotes.filter { it.voteClass == false }.size} votos negativos de teste, " +
+                "${fileParser.testingVotes.filter { it.voteClass == true }.size} votos positivos de teste.]\n")
     }
 }

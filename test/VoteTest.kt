@@ -9,7 +9,7 @@ internal class VoteTest {
 
     @Test
     fun buildAttributes() {
-        val vote = Vote("love kotlin unit-testing Please")
+        val vote = Vote("love kotlin unit-testing Please", true)
         vote.buildAttributes(BagOfWords(mutableListOf("I", "love", "kotlin", "unit-testing", "please", "sugar", "extra")))
 
         var checkSumIsCorrect = false

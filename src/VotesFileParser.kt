@@ -19,39 +19,25 @@ class VotesFileParser {
     /**
      * Votes of class YES used for training
      */
-    val trainingPositiveVotes = mutableListOf<Vote>()
-
-    /**
-     * Votes of class NO used for training
-     */
-    val trainingNegativeVotes = mutableListOf<Vote>()
+    val trainingVotes = mutableListOf<Vote>()
 
     /**
      * Votes of class YES used for testing
      */
-    val testingPositiveVotes = mutableListOf<Vote>()
-
-    /**
-     * Votes of class NO used for testing
-     */
-    val testingNegativeVotes = mutableListOf<Vote>()
+    val testingVotes = mutableListOf<Vote>()
 
     init  {
-        val allPositiveVotes = votesTextsFromFile(yesVotesFileName)
-        val allNegativeVotes = votesTextsFromFile(noVotesFileName)
+        val allVotes = votesTextsFromFile(yesVotesFileName) + votesTextsFromFile(noVotesFileName)
 
-        segregateTestingAndTrainingVotes(allPositiveVotes, trainingPositiveVotes, testingPositiveVotes)
-        segregateTestingAndTrainingVotes(allNegativeVotes, trainingNegativeVotes, testingNegativeVotes)
+        segregateTestingAndTrainingVotes(allVotes)
 
         buildBagOfWords()
 
-        trainingPositiveVotes.forEach { it.buildAttributes(trainingWords) }
-        trainingNegativeVotes.forEach { it.buildAttributes(trainingWords) }
-        testingPositiveVotes.forEach { it.buildAttributes(trainingWords) }
-        testingNegativeVotes.forEach { it.buildAttributes(trainingWords) }
+        trainingVotes.forEach { it.buildAttributes(trainingWords) }
+        testingVotes.forEach { it.buildAttributes(trainingWords) }
     }
 
-    private fun segregateTestingAndTrainingVotes(allVotes: MutableList<Vote>, trainingVotes: MutableList<Vote>, testingVotes: MutableList<Vote>) {
+    private fun segregateTestingAndTrainingVotes(allVotes: List<Vote>) {
         allVotes.forEach {
             if ((1..10).random() == 1)
                 testingVotes.add(it)
@@ -61,12 +47,16 @@ class VotesFileParser {
     }
 
     private fun buildBagOfWords() {
-        trainingPositiveVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
-        trainingNegativeVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
+        trainingVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
     }
 
     private fun votesTextsFromFile(fileName: String) : MutableList<Vote> {
         val votes = mutableListOf<Vote>()
+        val votesClass = when (fileName) {
+            yesVotesFileName -> true
+            noVotesFileName -> false
+            else -> true
+        }
 
         val inputStream = File(fileName).inputStream()
         val listOfLines = mutableListOf<String>()
@@ -79,7 +69,7 @@ class VotesFileParser {
         for (lineIndex in listOfLines.indices) {
             //found a blank line -> end of a vote
             if (listOfLines[lineIndex].isBlank()) {
-                votes.add(Vote(stringBuilder.toString().toLowerCase()))
+                votes.add(Vote(stringBuilder.toString().toLowerCase(), votesClass))
 
                 //reset builder and parse next vote
                 stringBuilder = StringBuilder()
