@@ -1,22 +1,20 @@
-class BagOfWords() {
+class BagOfWords {
 
-    var words: MutableList<String> = mutableListOf()
-        get() = field
+    var pairsWordCount: MutableMap<String, Int> = mutableMapOf()
 
-    constructor(list: MutableList<String>) : this() {
-        words = list
-    }
+    var size = 0
 
     fun parseWords(string: String) {
-        val parsedWords = string.split(" ", "\n")
-        parsedWords.filter { !it.isBlank() }.forEach {
-            if (!words.contains(it)) words.add(it)
+        val parsedWords = string.split(" ", "\n").map { it -> it.toLowerCase() }
+        parsedWords.filter { !it.isBlank() }.forEach { word ->
+            pairsWordCount.putIfAbsent(word, parsedWords.count{ it == word })
+            size += parsedWords.count{ it == word }
         }
     }
 
     override fun toString(): String {
         val builder = StringBuilder()
-        words.forEach{
+        pairsWordCount.forEach{
             builder.append("[ $it ]")
             builder.append("\n")
         }
@@ -25,8 +23,6 @@ class BagOfWords() {
     }
 
     fun clear() {
-        words.clear()
+        pairsWordCount.clear()
     }
-
-    fun size() = words.size
 }

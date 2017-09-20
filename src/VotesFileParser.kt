@@ -14,7 +14,8 @@ class VotesFileParser {
     /**
      * All the words in the training set
      */
-    val trainingWords = BagOfWords()
+    val bagOfWordsYes = BagOfWords()
+    val bagOfWordsNo = BagOfWords()
 
     /**
      * Votes of class YES used for training
@@ -27,14 +28,11 @@ class VotesFileParser {
     val testingVotes = mutableListOf<Vote>()
 
     init  {
-        val allVotes = votesTextsFromFile(yesVotesFileName) + votesTextsFromFile(noVotesFileName)
+        val allVotes = votesFromFile(yesVotesFileName) + votesFromFile(noVotesFileName)
 
         segregateTestingAndTrainingVotes(allVotes)
 
-        buildBagOfWords()
-
-        trainingVotes.forEach { it.buildAttributes(trainingWords) }
-        testingVotes.forEach { it.buildAttributes(trainingWords) }
+        buildBagsOfWords()
     }
 
     private fun segregateTestingAndTrainingVotes(allVotes: List<Vote>) {
@@ -46,11 +44,16 @@ class VotesFileParser {
         }
     }
 
-    private fun buildBagOfWords() {
-        trainingVotes.forEach { trainingWords.parseWords(it.text.toLowerCase()) }
+    private fun buildBagsOfWords() {
+        trainingVotes.filter { it.voteClass == true }.forEach {
+            bagOfWordsYes.parseWords(it.text.toLowerCase())
+        }
+        trainingVotes.filter{ it.voteClass == false }.forEach {
+            bagOfWordsNo.parseWords(it.text.toLowerCase())
+        }
     }
 
-    private fun votesTextsFromFile(fileName: String) : MutableList<Vote> {
+    private fun votesFromFile(fileName: String) : MutableList<Vote> {
         val votes = mutableListOf<Vote>()
         val votesClass = when (fileName) {
             yesVotesFileName -> true
